@@ -79,19 +79,37 @@ public class PostDaoImpl implements PostDao {
 
     @Override
     public Post getPostById(Long id) {
-//        String sql = "SELECT * FROM posts WHERE id = ?";
-//        try(PreparedStatement preparedStatement = connection.prepareStatement(sql)){
-//            ResultSet resultSet = preparedStatement.executeQuery();
-//            while (resultSet.next()){
-//                preparedStatement.setString(1, );
-//            }
-//        }
+        String sql = "SELECT * FROM posts WHERE id = ?";
+        try(PreparedStatement preparedStatement = connection.prepareStatement(sql)){
+            preparedStatement.setLong(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            Post post = new Post();
+            while (resultSet.next()){
+                post.setImage(resultSet.getString("image"));
+                post.setDescription(resultSet.getString("description"));
+                post.setCreatedDate(resultSet.getDate("created_date").toLocalDate());
+                post.setUserId(resultSet.getLong("user_id"));
+                return post;
+            }
+
+    }catch (SQLException e){
+        System.out.println(e.getMessage());}
         return null;
     }
 
     @Override
     public void updatePost(Long id, Post newPost) {
-
+        String sql = "UPDATE posts SET image = ?,description = ?,created_date =? , user_id =? WHERE id = ?";
+        try(PreparedStatement preparedStatement = connection.prepareStatement(sql)){
+            preparedStatement.setString(1,newPost.getImage());
+            preparedStatement.setString(2, newPost.getDescription());
+            preparedStatement.setDate(3, Date.valueOf(newPost.getCreatedDate()));
+            preparedStatement.setLong(4, newPost.getUserId());
+            preparedStatement.setLong(5, id);
+            preparedStatement.executeUpdate();
+        }catch (SQLException e){
+            System.out.println(e.getMessage());
+        }
     }
 
     @Override
@@ -108,6 +126,16 @@ public class PostDaoImpl implements PostDao {
 
     @Override
     public Long countPostsByUser(Long id) {
+        String sql = "SELECT COUNT(*) FROM posts WHERE user_id = ?";
+        try(PreparedStatement preparedStatement = connection.prepareStatement(sql)){
+            preparedStatement.setLong(1,id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if(resultSet.next()){
+                return resultSet.getLong(1);
+            }
+        }catch (SQLException e){
+            System.out.println(e.getMessage());
+        }
         return 0L;
     }
 }

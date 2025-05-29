@@ -37,21 +37,21 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Post getPostById(Long id) {
-        return null;
+        return postDao.getPostById(id);
     }
 
     @Override
     public void updatePost(Long id, Post newPost) {
-
+        postDao.updatePost(id, newPost);
     }
 
     @Override
     public void deletePost(Long id) {
-
+        postDao.deletePost(id);
     }
 
     @Override
     public Long countPostsByUser(Long id) {
-        return 0L;
+        return postDao.countPostsByUser(id);
     }
 }
